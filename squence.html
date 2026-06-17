@@ -88,7 +88,7 @@
     <!-- APP LAYOUT (SIDEBAR + MAIN CONTENT) -->
     <div id="app-layout" class="flex-1 flex overflow-hidden bg-slate-50 relative w-full h-full">
         
-        <!-- Mobile Header (Visible only on small screens) -->
+        <!-- Mobile Header -->
         <div class="md:hidden absolute top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-40">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-md">
@@ -1487,7 +1487,6 @@
                             </div>
                         </div>`;
                     } else {
-                        // Render untuk kartu Sequence
                         html += `
                         <div onclick="useTemplate('${key}')" class="border border-emerald-100 rounded-2xl p-6 flex flex-col cursor-pointer hover:border-emerald-500 hover:shadow-lg transition bg-white group min-h-[220px] relative overflow-hidden">
                             <div class="w-14 h-14 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -1514,10 +1513,8 @@
             if (currentModalType === 'sequence') {
                 if (key !== 'blank') {
                     const tpl = availableSequenceTemplates[key];
-                    // Deep copy agar tidak mengubah template asli
                     sequencesData = JSON.parse(JSON.stringify(tpl.sequenceData));
                     
-                    // Generate ID baru agar tidak bentrok jika edit-edit
                     sequencesData.forEach((s, idx) => {
                         s.id = Date.now() + idx;
                     });
@@ -1529,7 +1526,6 @@
                 return;
             }
             
-            // Logika penerapan Template FORM
             if(key === 'blank') {
                 formConfig = JSON.parse(JSON.stringify(defaultFormConfig));
                 formFields = JSON.parse(JSON.stringify(defaultFormFields));
@@ -1583,225 +1579,6 @@
             updateConfig();
             switchTab('builder'); 
             goToStep(1);
-        }
-
-        // =========================================================================
-        // SEQUENCE WA LOGIC
-        // =========================================================================
-        function renderSequenceViews() {
-            const selectTarget = document.getElementById('seq-form-target');
-            if (!selectTarget) return;
-
-            const currentSelection = selectTarget.value;
-
-            selectTarget.innerHTML = '<option value="">-- Pilih Form yang Ingin Diatur --</option>';
-            savedForms.forEach(f => {
-                selectTarget.innerHTML += `<option value="${f.id}">${f.title}</option>`;
-            });
-
-            if (currentSelection && savedForms.find(f => f.id === currentSelection)) {
-                selectTarget.value = currentSelection;
-            } else if (savedForms.length > 0) {
-                selectTarget.value = savedForms[0].id;
-            }
-
-            renderSequenceVariables();
-        }
-
-        function renderSequenceVariables() {
-            const formId = document.getElementById('seq-form-target').value;
-            const container = document.getElementById('seq-variable-container');
-            
-            let html = `<span class="text-[10px] font-bold text-slate-400 uppercase">Variabel:</span>`;
-            
-            if (!formId) {
-                container.innerHTML = html + `<span class="text-xs text-slate-400 italic">Pilih form target terlebih dahulu</span>`;
-                return;
-            }
-
-            const form = savedForms.find(f => f.id === formId);
-            if (!form || !form.fields) {
-                container.innerHTML = html + `<span class="text-xs text-slate-400 italic">Form tidak memiliki data field yang valid</span>`;
-                return;
-            }
-
-            const colors = ['blue', 'emerald', 'amber', 'purple', 'rose', 'teal'];
-            form.fields.forEach((f, idx) => {
-                const c = colors[idx % colors.length];
-                html += `<button onclick="insertVar('[${f.label}]')" class="text-xs bg-${c}-50 text-${c}-600 hover:bg-${c}-100 font-bold px-2.5 py-1.5 rounded-lg border border-${c}-100 transition max-w-[150px] truncate" title="[${f.label}]">[${f.label}]</button>`;
-            });
-
-            if (form.hasCalc) {
-                html += `<button onclick="insertVar('[Total_Tagihan]')" class="text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold px-2.5 py-1.5 rounded-lg border border-slate-300 transition shadow-sm">[Total_Tagihan]</button>`;
-            }
-
-            container.innerHTML = html;
-            updateSeqPreview();
-        }
-
-        function renderTimeline() {
-            const container = document.getElementById('sequence-timeline');
-            if(!container) return;
-            container.innerHTML = '';
-            
-            sequencesData.forEach((seq, index) => {
-                const isActive = seq.id === activeSeqId;
-                const borderClass = isActive ? 'border-emerald-500 bg-emerald-50/50' : 'border-slate-200 hover:bg-slate-50';
-                const numBgClass = isActive ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-500';
-                const titleClass = isActive ? 'text-emerald-800' : 'text-slate-700';
-
-                let previewText = seq.msg.replace(/\n/g, ' ');
-                if(!previewText.trim()) previewText = 'Pesan kosong...';
-
-                container.innerHTML += `
-                    <div onclick="selectSequence(${seq.id})" class="flex items-center gap-3 p-3 rounded-xl border ${borderClass} cursor-pointer transition animate-fade-in relative group">
-                        <div class="w-8 h-8 rounded-full ${numBgClass} flex items-center justify-center font-bold text-xs flex-shrink-0">${index + 1}</div>
-                        <div class="flex-1 overflow-hidden">
-                            <p class="text-sm font-bold ${titleClass}">Kirim: ${seq.timeVal} ${seq.timeUnit} Setelah Order</p>
-                            <p class="text-xs text-slate-500 truncate">${previewText}</p>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function selectSequence(id) {
-            activeSeqId = id;
-            const seq = sequencesData.find(s => s.id === id);
-            if(seq) {
-                document.getElementById('seq-time-val').value = seq.timeVal;
-                document.getElementById('seq-time-unit').value = seq.timeUnit;
-                document.getElementById('seq-editor').value = seq.msg;
-                
-                if(document.getElementById('seq-stop-paid')) {
-                    document.getElementById('seq-stop-paid').checked = seq.stopIfPaid || false;
-                }
-                
-                updateSeqPreview();
-                renderTimeline(); 
-            }
-        }
-
-        function addSequenceItem() {
-            const newSeq = {
-                id: Date.now(),
-                timeVal: 1,
-                timeUnit: 'Hari',
-                msg: 'Halo, ini pesan follow-up otomatis...',
-                stopIfPaid: true
-            };
-            sequencesData.push(newSeq);
-            selectSequence(newSeq.id);
-            showToast('Jadwal baru ditambahkan!');
-        }
-
-        function updateSequenceData() {
-            const seq = sequencesData.find(s => s.id === activeSeqId);
-            if(seq) {
-                seq.timeVal = document.getElementById('seq-time-val').value;
-                seq.timeUnit = document.getElementById('seq-time-unit').value;
-                seq.msg = document.getElementById('seq-editor').value;
-                
-                if(document.getElementById('seq-stop-paid')) {
-                    seq.stopIfPaid = document.getElementById('seq-stop-paid').checked;
-                }
-                
-                renderTimeline(); 
-                updateSeqPreview(); 
-            }
-        }
-
-        function deleteActiveSequence() {
-            if(sequencesData.length <= 1) {
-                showToast('Minimal harus ada 1 pesan sequence!');
-                return;
-            }
-            if(confirm('Hapus jadwal pesan ini?')) {
-                sequencesData = sequencesData.filter(s => s.id !== activeSeqId);
-                selectSequence(sequencesData[0].id); 
-                showToast('Jadwal berhasil dihapus!');
-            }
-        }
-
-        function insertFormat(char) {
-            const textarea = document.getElementById('seq-editor');
-            const start = textarea.selectionStart; 
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            
-            if (start !== end) {
-                const selected = text.substring(start, end);
-                textarea.value = text.substring(0, start) + char + selected + char + text.substring(end);
-                textarea.selectionStart = start;
-                textarea.selectionEnd = end + 2;
-            } else {
-                textarea.value = text.substring(0, start) + char + char + text.substring(end);
-                textarea.selectionStart = textarea.selectionEnd = start + 1;
-            }
-            
-            textarea.focus(); 
-            updateSequenceData();
-        }
-
-        function insertVar(varString) {
-            const textarea = document.getElementById('seq-editor');
-            const start = textarea.selectionStart;
-            const text = textarea.value;
-            
-            textarea.value = text.substring(0, start) + varString + text.substring(start);
-            textarea.selectionStart = textarea.selectionEnd = start + varString.length;
-            textarea.focus();
-            updateSequenceData(); 
-        }
-
-        function updateSeqPreview() {
-            let text = document.getElementById('seq-editor').value;
-            
-            if(!text.trim()) {
-                document.getElementById('seq-preview-bubble').innerHTML = "<span class='text-slate-400 italic'>Ketik pesan di editor untuk melihat *Preview* di sini...</span>";
-                return;
-            }
-
-            text = text.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
-            text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            text = text.replace(/\*([^\*]+)\*/g, "<b>$1</b>");
-            text = text.replace(/_([^_]+)_/g, "<i>$1</i>");
-            text = text.replace(/~([^~]+)~/g, "<s>$1</s>");
-            
-            text = text.replace(/\[(.*?)\]/g, '<span class="bg-blue-100 text-blue-800 px-1 rounded text-xs font-bold whitespace-nowrap overflow-hidden inline-block align-bottom max-w-[150px] text-ellipsis">Data $1</span>');
-            
-            document.getElementById('seq-preview-bubble').innerHTML = text;
-        }
-        
-        function saveSequenceToServer() {
-            const selectTarget = document.getElementById('seq-form-target');
-            if (!selectTarget || !selectTarget.value) {
-                showToast("Pilih Form Target terlebih dahulu!");
-                return;
-            }
-            
-            const formId = selectTarget.value;
-            const form = savedForms.find(f => f.id === formId);
-            
-            showToast("Menyimpan aturan Sequence ke Google Sheets...");
-            
-            const payload = {
-                action: "save_sequence_rules",
-                formName: form.title,
-                sequences: sequencesData
-            };
-            
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                setTimeout(() => showToast("Aturan Sequence berhasil disimpan di Google Sheets!"), 1000);
-            }).catch(e => {
-                console.error(e);
-                showToast("Terjadi kesalahan saat menyimpan ke Google Sheets.");
-            });
         }
 
         // =========================================================================
@@ -2411,9 +2188,7 @@
                 }
 
                 popupWrapperStart = `
-<!-- Trigger Popup -->
 <button class="im-trigger-btn" onclick="document.getElementById('im-overlay').classList.add('im-show')">${btnTextPopup}</button>
-<!-- Overlay -->
 <div id="im-overlay" class="im-overlay">
     <div class="im-modal">
         <button class="im-close" onclick="document.getElementById('im-overlay').classList.remove('im-show')">✕</button>
@@ -2437,16 +2212,16 @@
 
             if (formConfig.enablePixel) {
                 if (formConfig.fbPixel) {
-                    pixelHeadCode += `\n<!-- Meta Pixel Code -->\n<script>\n!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');\nfbq('init', '${formConfig.fbPixel}');\nfbq('track', 'PageView');\n<\/script>\n`;
+                    pixelHeadCode += `\n\n<script>\n!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');\nfbq('init', '${formConfig.fbPixel}');\nfbq('track', 'PageView');\n<\/script>\n`;
                     pixelTrackCode += `\n    if(typeof fbq === 'function') { fbq('track', finalTotal > 0 ? 'Purchase' : 'Lead', finalTotal > 0 ? {value: finalTotal, currency: 'IDR'} : {}); }`;
                 }
                 if (formConfig.tiktokPixel) {
-                    pixelHeadCode += `\n<!-- TikTok Pixel Code -->\n<script>\n!function (w, d, t) { w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};\nttq.load('${formConfig.tiktokPixel}');\nttq.page();\n}(window, document, 'ttq');\n<\/script>\n`;
+                    pixelHeadCode += `\n\n<script>\n!function (w, d, t) { w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};\nttq.load('${formConfig.tiktokPixel}');\nttq.page();\n}(window, document, 'ttq');\n<\/script>\n`;
                     pixelTrackCode += `\n    if(typeof ttq !== 'undefined') { ttq.track(finalTotal > 0 ? 'PlaceAnOrder' : 'SubmitForm', finalTotal > 0 ? {value: finalTotal, currency: 'IDR'} : {}); }`;
                 }
                 if (formConfig.googlePixel) {
                     let awId = formConfig.googlePixel.split('/')[0];
-                    pixelHeadCode += `\n<!-- Google tag (gtag.js) -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=${awId}"><\/script>\n<script>\nwindow.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', '${awId}');\n<\/script>\n`;
+                    pixelHeadCode += `\n\n<script async src="https://www.googletagmanager.com/gtag/js?id=${awId}"><\/script>\n<script>\nwindow.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', '${awId}');\n<\/script>\n`;
                     pixelTrackCode += `\n    if(typeof gtag === 'function') { gtag('event', 'conversion', {'send_to': '${formConfig.googlePixel}', 'value': finalTotal, 'currency': 'IDR'}); }`;
                 }
             }
@@ -2582,7 +2357,7 @@ document.getElementById('im-form').addEventListener('submit', function(e) {
 <\/script>
 `;
             
-            document.getElementById('output-code').value = `<!-- iMersFOW Start -->\n${pixelHeadCode}${cssCode}\n${popupWrapperStart}${rawFormHtml}${popupWrapperEnd}\n${scriptString}\n<!-- iMersFOW End -->`;
+            document.getElementById('output-code').value = `\n${pixelHeadCode}${cssCode}\n${popupWrapperStart}${rawFormHtml}${popupWrapperEnd}\n${scriptString}\n`;
         }
 
         function copyEmbedCode() { 
@@ -2601,7 +2376,7 @@ document.getElementById('im-form').addEventListener('submit', function(e) {
             // 2. Load Semua Konfigurasi Global
             loadGlobalSettings(); 
             
-            // 3. Tarik data template LANGSUNG DARI URL DEPLOY tanpa kunci-kuncian
+            // 3. Tarik data template (Form dan Sequence) dari server
             initTemplateEngine();
 
             // 4. Setup Warna Awal 
