@@ -86,10 +86,9 @@
 <body class="antialiased h-screen flex flex-col">
 
     <!-- APP LAYOUT (SIDEBAR + MAIN CONTENT) -->
-    <!-- Tidak menggunakan hidden agar langsung tampil ke Dashboard -->
     <div id="app-layout" class="flex-1 flex overflow-hidden bg-slate-50 relative w-full h-full">
         
-        <!-- Mobile Header (Visible only on small screens) -->
+        <!-- Mobile Header -->
         <div class="md:hidden absolute top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-40">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-md">
@@ -102,13 +101,11 @@
             </button>
         </div>
 
-        <!-- Sidebar Overlay (Mobile) -->
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden opacity-0 backdrop-blur-sm"></div>
 
         <!-- SIDEBAR -->
         <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-50 w-64 flex-shrink-0 bg-slate-900 text-slate-300 transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col shadow-2xl md:shadow-none border-r border-slate-800">
             
-            <!-- Branding -->
             <div class="h-16 lg:h-20 flex items-center px-6 border-b border-slate-800">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-lg">
@@ -119,14 +116,11 @@
                         <p class="text-[9px] lg:text-[10px] text-slate-500 font-bold tracking-widest uppercase">Pro Edition</p>
                     </div>
                 </div>
-                <!-- Close btn mobile -->
                 <button onclick="toggleSidebar()" class="md:hidden ml-auto text-slate-400 hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
             </div>
 
-            <!-- Navigation Links -->
             <div class="flex-1 overflow-y-auto custom-scrollbar py-6 px-4 space-y-8">
                 
-                <!-- Group 1: Core -->
                 <div>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Core Tools</p>
                     <div class="space-y-1">
@@ -140,7 +134,6 @@
                     </div>
                 </div>
 
-                <!-- Group 2: Automation -->
                 <div>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Automation</p>
                     <div class="space-y-1">
@@ -156,7 +149,6 @@
                     </div>
                 </div>
 
-                <!-- Group 3: Help -->
                 <div>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Bantuan</p>
                     <div class="space-y-1">
@@ -167,7 +159,6 @@
                 </div>
             </div>
 
-            <!-- User Info -->
             <div class="p-4 border-t border-slate-800">
                 <div class="flex items-center gap-3 bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">
                     <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 font-bold uppercase text-xs" id="sidebar-avatar">M</div>
@@ -224,7 +215,7 @@
                                 <i class="ph-fill ph-trend-up text-3xl"></i>
                             </div>
                             <div>
-                                <p class="text-sm text-slate-500 font-semibold mb-1">Rata-rata Konversi</p>
+                                <p class="text-sm text-slate-500 font-semibold mb-1">Konversi Rata-rata</p>
                                 <h3 id="stat-conversion-rate" class="text-3xl font-bold text-slate-800 leading-none">0.0%</h3>
                             </div>
                         </div>
@@ -240,8 +231,8 @@
                                     <tr>
                                         <th class="px-6 py-4">Nama Form</th>
                                         <th class="px-6 py-4">Tanggal Buat</th>
-                                        <th class="px-6 py-4 text-center">Status</th>
-                                        <th class="px-6 py-4 text-center">Total Leads</th>
+                                        <th class="px-6 py-4 text-center">Statistik</th>
+                                        <th class="px-6 py-4 text-center">Total Leads & Konversi</th>
                                         <th class="px-6 py-4 text-right">Aksi</th>
                                     </tr>
                                 </thead>
@@ -258,11 +249,10 @@
                         <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
                             <i class="ph-fill ph-paper-plane-right text-emerald-500"></i> Auto Follow-Up (Sequence)
                         </h1>
-                        <p class="text-slate-500 text-sm mt-1">Buat pesan berantai otomatis yang terkirim di latar belakang via API Fonnte/WAPlus.</p>
+                        <p class="text-slate-500 text-sm mt-1">Buat pesan berantai otomatis yang terkirim di latar belakang via API Provider.</p>
                     </div>
 
                     <div class="flex flex-col lg:flex-row gap-6 flex-1 items-start">
-                        <!-- Panel Kiri: Pengaturan & Editor -->
                         <div class="flex-1 w-full min-w-0 flex flex-col gap-5">
                             
                             <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -283,7 +273,6 @@
                                     </div>
                                 </div>
                                 <div class="space-y-3" id="sequence-timeline">
-                                    <!-- Di-render oleh Javascript -->
                                 </div>
                             </div>
 
@@ -336,7 +325,6 @@
                             </div>
                         </div>
 
-                        <!-- Panel Kanan: Live Preview WA -->
                         <div class="w-full lg:w-[380px] flex-shrink-0 bg-slate-100 rounded-3xl border border-slate-200 flex flex-col items-center p-6 lg:p-8 shadow-inner overflow-hidden relative sticky top-6">
                             <div class="flex items-center justify-center gap-2 mb-6 w-full">
                                 <span class="h-px flex-1 bg-slate-300"></span>
@@ -346,7 +334,6 @@
                                 <span class="h-px flex-1 bg-slate-300"></span>
                             </div>
 
-                            <!-- Phone Frame -->
                             <div class="w-[320px] bg-white rounded-[32px] shadow-2xl border-[8px] border-slate-800 overflow-hidden flex flex-col h-[550px] relative">
                                 <div class="absolute top-0 inset-x-0 h-5 bg-slate-800 rounded-b-xl w-32 mx-auto z-20"></div>
                                 <div class="bg-[#075e54] text-white p-3 pt-7 flex items-center gap-3 relative z-10 shadow-md">
@@ -379,7 +366,6 @@
                     </div>
 
                     <div class="max-w-3xl mx-auto">
-                        <!-- WhatsApp Gateway Settings (Full Width now) -->
                         <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 lg:p-8">
                             <div class="flex items-center gap-4 mb-6">
                                 <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-inner border border-emerald-100">
@@ -419,7 +405,7 @@
                                         </div>
                                         <div>
                                             <span class="block text-sm font-bold text-slate-900 flex items-center gap-2">WhatsApp Official API <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px] font-bold tracking-wider">PRO</span></span>
-                                            <span class="mt-1 block text-xs text-slate-500 leading-relaxed">Pesan terkirim otomatis di belakang layar tanpa membuka aplikasi WA. Mendukung Fonnte & WAPlus.</span>
+                                            <span class="mt-1 block text-xs text-slate-500 leading-relaxed">Pesan terkirim otomatis di belakang layar tanpa membuka aplikasi WA.</span>
                                         </div>
                                     </div>
                                 </label>
@@ -430,6 +416,8 @@
                                         <select id="api-provider" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-500 transition">
                                             <option value="fonnte">Fonnte API (fonnte.com)</option>
                                             <option value="waplus">WAPlus API (waplus.id)</option>
+                                            <option value="starsender">StarSender API (starsender.online)</option>
+                                            <option value="xsender">XSender API (xsender.id)</option>
                                         </select>
                                     </div>
                                     <div>
@@ -479,8 +467,8 @@
                                 <i class="ph-fill ph-youtube-logo text-white text-6xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all"></i>
                             </div>
                             <div class="p-6">
-                                <h3 class="text-lg font-bold text-slate-800 mb-2">2. Setting Fonnte & WAPlus API</h3>
-                                <p class="text-sm text-slate-600 mb-4">Cara mendapatkan API Key, mendaftarkan nomor sender (Device ID), dan melakukan testing pengiriman WA Background.</p>
+                                <h3 class="text-lg font-bold text-slate-800 mb-2">2. Setting Provider API WA</h3>
+                                <p class="text-sm text-slate-600 mb-4">Cara mendapatkan API Key, mendaftarkan nomor sender, dan test kirim WA otomatis via API.</p>
                                 <button class="text-blue-600 font-bold text-sm hover:underline flex items-center gap-1">Tonton Video <i class="ph-bold ph-arrow-right"></i></button>
                             </div>
                         </div>
@@ -489,7 +477,6 @@
 
                 <!-- VIEW: BUILDER FORM (STEP 1 - 4) -->
                 <div id="view-builder" class="hidden animate-fade-in max-w-7xl mx-auto w-full flex flex-col relative h-[80vh]">
-                    <!-- Navigasi Steps -->
                     <div class="mb-6 overflow-x-auto pb-2 flex-shrink-0">
                         <nav class="flex items-center justify-between min-w-[600px] w-full relative max-w-4xl mx-auto">
                             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 z-0 rounded-full"></div>
@@ -516,7 +503,6 @@
 
                     <div class="relative w-full flex-1 bg-white rounded-[24px] shadow-sm border border-slate-200 overflow-hidden">
                         
-                        <!-- STEP 1: DESAIN -->
                         <div id="step-1" class="step-content absolute inset-0 p-6 lg:p-10 transition-transform duration-300 transform translate-x-0 overflow-y-auto custom-scrollbar pb-40">
                             <div class="max-w-3xl mx-auto space-y-8">
                                 <div>
@@ -592,7 +578,6 @@
                                             <i class="ph-fill ph-text-aa text-rose-500 text-lg"></i> Warna Teks Dinamis
                                         </h4>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            <!-- Teks Judul Form -->
                                             <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
                                                 <label class="block text-sm font-bold text-slate-700 mb-3 border-b border-slate-100 pb-2">Teks Judul Form</label>
                                                 <div class="flex items-center gap-4 mb-4">
@@ -606,7 +591,6 @@
                                                 <div id="title-color-inputs" class="flex items-center gap-3"></div>
                                             </div>
                                             
-                                            <!-- Teks Tombol CTA -->
                                             <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
                                                 <label class="block text-sm font-bold text-slate-700 mb-3 border-b border-slate-100 pb-2">Teks Tombol CTA</label>
                                                 <div class="flex items-center gap-4 mb-4">
@@ -628,7 +612,6 @@
                                     </div>
                                 </div>
 
-                                <!-- TRACKING PIXEL SECTION -->
                                 <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 mt-6">
                                     <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-2">
                                         <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -695,7 +678,6 @@
                             </div>
                         </div>
 
-                        <!-- STEP 2: SUSUN FIELD -->
                         <div id="step-2" class="step-content absolute inset-0 flex transition-transform duration-300 transform translate-x-full overflow-hidden bg-white">
                             <div class="w-72 bg-slate-50 border-r border-slate-200 flex flex-col h-full flex-shrink-0">
                                 <div class="p-4 border-b border-slate-200 bg-white">
@@ -779,7 +761,6 @@
                             </div>
                         </div>
 
-                        <!-- STEP 3: PREVIEW -->
                         <div id="step-3" class="step-content absolute inset-0 flex flex-col md:flex-row transition-transform duration-300 transform translate-x-full overflow-y-auto overflow-x-hidden md:overflow-hidden bg-white">
                             <div class="flex-1 p-6 lg:p-10 md:overflow-y-auto custom-scrollbar border-r border-slate-200 relative pb-40 md:pb-32 bg-slate-50/50">
                                 <div class="flex items-center justify-center gap-2 mb-8">
@@ -819,7 +800,6 @@
                             </div>
                         </div>
 
-                        <!-- STEP 4: EMBED -->
                         <div id="step-4" class="step-content absolute inset-0 p-6 lg:p-10 transition-transform duration-300 transform translate-x-full overflow-y-auto custom-scrollbar flex flex-col bg-white pb-40">
                             <div class="max-w-4xl mx-auto w-full flex-1 flex flex-col min-h-full">
                                 <div class="text-center mb-8">
@@ -1565,7 +1545,7 @@
             grid.innerHTML = '<div class="col-span-full text-center py-12 text-slate-500"><i class="ph-bold ph-spinner animate-spin text-3xl mb-3 text-blue-500"></i><p>Menarik data template dari server...</p></div>';
             
             try {
-                // Tarik Template Form dari MASTER_SCRIPT_URL (Sheets pusat lu yang terjamin ada isinya)
+                // Tarik Template Form dari MASTER_SCRIPT_URL
                 const resultForm = await fetchWithBackoff(MASTER_SCRIPT_URL + "?action=get_templates");
                 if(resultForm && resultForm.status === 'success') {
                     availableTemplates = resultForm.data;
@@ -1577,7 +1557,6 @@
                     availableSequenceTemplates = resultSeq.data;
                 }
                 
-                // Kondisi Awal Form (Background Rendering)
                 if(Object.keys(availableTemplates).length > 0) {
                     renderCategorySidebar();
                     filterTemplates('Semua');
@@ -1756,14 +1735,18 @@
             if(key === 'blank') {
                 formConfig = JSON.parse(JSON.stringify(defaultFormConfig));
                 formFields = JSON.parse(JSON.stringify(defaultFormFields));
-                document.querySelector('input[name="header_type"][value="solid"]').checked = true;
-                document.querySelector('input[name="cta_type"][value="solid"]').checked = true;
+                const solidHeader = document.querySelector('input[name="header_type"][value="solid"]');
+                if (solidHeader) solidHeader.checked = true;
+                const solidCta = document.querySelector('input[name="cta_type"][value="solid"]');
+                if (solidCta) solidCta.checked = true;
             } else {
                 const tpl = availableTemplates[key];
                 formConfig = JSON.parse(JSON.stringify(tpl.config));
                 formFields = JSON.parse(JSON.stringify(tpl.fields));
-                document.querySelector('input[name="header_type"][value="gradient"]').checked = true;
-                document.querySelector('input[name="cta_type"][value="gradient"]').checked = true;
+                const gradientHeader = document.querySelector('input[name="header_type"][value="gradient"]');
+                if (gradientHeader) gradientHeader.checked = true;
+                const gradientCta = document.querySelector('input[name="cta_type"][value="gradient"]');
+                if (gradientCta) gradientCta.checked = true;
             }
 
             formConfig.titleColorType = formConfig.titleColorType || 'solid';
@@ -1784,14 +1767,18 @@
             document.getElementById('cfg-btn-text').value = formConfig.btnText; 
             document.getElementById('cfg-logo').value = formConfig.logoUrl;
             
-            document.querySelector(`input[name="displayMode"][value="${formConfig.displayMode}"]`).checked = true;
+            const displayModeRadio = document.querySelector(`input[name="displayMode"][value="${formConfig.displayMode}"]`);
+            if (displayModeRadio) displayModeRadio.checked = true;
             
             document.getElementById('cfg-trust-toggle').checked = formConfig.trustBadge; 
             document.getElementById('cfg-trust-title').value = formConfig.trustTitle; 
             document.getElementById('cfg-trust-desc').value = formConfig.trustDesc;
             
-            document.querySelector(`input[name="title_color_type"][value="${formConfig.titleColorType}"]`).checked = true;
-            document.querySelector(`input[name="cta_text_type"][value="${formConfig.ctaTextColorType}"]`).checked = true;
+            const titleColorRadio = document.querySelector(`input[name="title_color_type"][value="${formConfig.titleColorType}"]`);
+            if (titleColorRadio) titleColorRadio.checked = true;
+            
+            const ctaTextRadio = document.querySelector(`input[name="cta_text_type"][value="${formConfig.ctaTextColorType}"]`);
+            if (ctaTextRadio) ctaTextRadio.checked = true;
             
             document.getElementById('cfg-pixel-toggle').checked = formConfig.enablePixel;
             document.getElementById('cfg-pixel-fb').value = formConfig.fbPixel;
@@ -1803,7 +1790,22 @@
             toggleTextColorMode('title');
             toggleTextColorMode('cta_text');
 
-            updateConfig();
+            const trustInputs = document.getElementById('trust-inputs');
+            if (formConfig.trustBadge) { 
+                trustInputs.style.opacity = '1'; 
+                trustInputs.style.pointerEvents = 'auto'; 
+            } else { 
+                trustInputs.style.opacity = '0.5'; 
+                trustInputs.style.pointerEvents = 'none'; 
+            }
+            
+            const pixelInputs = document.getElementById('pixel-inputs');
+            if (formConfig.enablePixel) {
+                pixelInputs.classList.remove('hidden');
+            } else {
+                pixelInputs.classList.add('hidden');
+            }
+
             switchTab('builder'); 
             goToStep(1);
         }
@@ -2507,6 +2509,17 @@ calculateTotal();
             const scriptString = `
 <script>
 ${calcLogic}
+
+// Track Form View on Load (NEW VISITOR TRACKER SCRIPT INJECTION)
+(function() {
+    const sheetUrl = '${SCRIPT_URL}';
+    if(sheetUrl && sheetUrl.startsWith('http')) {
+        fetch(sheetUrl + "?action=track_view&form_name=" + encodeURIComponent('${formConfig.title}'), {
+            method: 'GET',
+            mode: 'no-cors'
+        });
+    }
+})();
 
 document.getElementById('im-form').addEventListener('submit', function(e) { 
     e.preventDefault(); 
